@@ -1,21 +1,19 @@
-import {View, Text} from 'react-native';
-import React from 'react';
-import { styles } from '../components/style';
+import { View, Text } from "react-native";
+import React from "react";
+import { styles } from "../components/style";
 
-const ProfileScreen = () => {
+const RegisterScreen = () => {
   return (
-    <View style={{flex:1, alignItems: 'center'}}>
+    <View style={{ flex: 1, alignItems: "center" }}>
       <View style={styles.container}>
-        <Text style={styles.textTopStyle}>
-          ลงทะเบียน
-        </Text>
+        <Text style={styles.textTopStyle}>ลงทะเบียน</Text>
       </View>
 
       <View>
-      <Text style={styles.textBottomStyle}>www.tni.ac.th</Text>
-    </View>
+        <Text style={styles.textBottomStyle}>www.tni.ac.th</Text>
+      </View>
     </View>
   );
 };
 
-export default ProfileScreen;
+export default RegisterScreen;

@@ -10,6 +10,7 @@ import ProductScreen from "./screens/ProductScreen";
 import AboutScreen from "./screens/AboutScreen";
 import DetailScreen from "./screens/DetailScreen";
 import MenuScreen from "./screens/MenuScreen";
+import RegisterScreen from "./screens/RegisterScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -34,6 +35,11 @@ function HomeStack() {
         component={AboutScreen}
         options={{ title: "เกี่ยวกับเรา" }}
       />
+      <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{ title: "ลงทะเบียน" }}
+      />
     </Stack.Navigator>
   );
 }
@@ -41,19 +47,29 @@ function HomeStack() {
 function ProductStack() {
   return (
     <Stack.Navigator
-      initialRouteName="HomeScreen"
       screenOptions={{
-        headerStyle: { backgroundColor: "#654321" },
-        headerTintColor: "#FFFF",
-        headerTitleStyle: { fontWeight: "bold" },
+        headerStyle: {
+          backgroundColor: "#654321",
+        },
+        headerTintColor: "#fff",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
       }}
     >
-      <Stack.Screen name="Product" component={ProductScreen} />
-      <Stack.Screen name="Detail" component={DetailScreen} />
+      <Stack.Screen
+        name="Product"
+        component={ProductScreen}
+        options={{ title: "สินค้า" }}
+      />
+      <Stack.Screen
+        name="Detail"
+        component={DetailScreen}
+        options={{ title: "รายละเอียด" }}
+      />
     </Stack.Navigator>
   );
 }
-
 const App = () => {
   return (
     <NavigationContainer>
@@ -66,8 +82,8 @@ const App = () => {
         }}
         drawerContent={(props) => <MenuScreen {...props} />}
       >
-        <Drawer.Screen name="HomeScreen" component={HomeStack} />
-        <Drawer.Screen name="ProductScreen" component={ProductStack} />
+        <Drawer.Screen name="HomeStack" component={HomeStack} />
+        <Drawer.Screen name="ProductStack" component={ProductStack} />
       </Drawer.Navigator>
     </NavigationContainer>
   );

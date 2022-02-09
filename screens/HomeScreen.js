@@ -7,6 +7,7 @@ import {
   HeaderButton,
   Item,
 } from "react-navigation-header-buttons";
+import RegisterScreen from "./RegisterScreen";
 
 const IoniconsHeaderButton = (props) => (
   <HeaderButton IconComponent={Ionicons} iconSize={23} {...props} />
@@ -29,7 +30,7 @@ const HomeScreen = ({ navigation }) => {
           <Item
             title="register"
             iconName="person-add"
-            onPress={() => alert("ลงทะเบียน")}
+            onPress={() => navigation.navigate("Register")}
           />
         </HeaderButtons>
       ),

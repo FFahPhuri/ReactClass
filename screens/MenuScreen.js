@@ -14,11 +14,33 @@ import {
   Right,
   Switch,
 } from "native-base";
+import { userStoreContext } from "../context/UserContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MenuScreen = ({ navigation }) => {
+  // const [profile, setProfile] = React.useState(null);
+  const userStore = React.useContext(userStoreContext);
+  React.useEffect(() => {
+    const getProfile = async () => {
+      const profile = await AsyncStorage.getItem("@profile");
+      if (profile) {
+        userStore.updateProfile(JSON.parse(profile));
+        // setProfile(JSON.parse(profile));
+      }
+    };
+    getProfile();
+  }, []);
   return (
     <ScrollView style={{ flex: 1 }}>
-      <View>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          height: 150,
+          width: undefined,
+        }}
+      >
         <Text
           style={{
             color: "blue",
@@ -29,38 +51,51 @@ const MenuScreen = ({ navigation }) => {
         >
           เมนูหลัก
         </Text>
-        {/* code from native base */}
-        <Content>
-          <ListItem
-            icon
-            style={{ marginBottom: 10, marginTop: 10 }}
-            onPress={() => navigation.navigate("HomeStack")}
-          >
-            <Left>
-              <Button style={{ backgroundColor: "#FF9501" }}>
-                <Icon active name="home" />
-              </Button>
-            </Left>
-            <Body>
-              <Text>หน้าหลัก</Text>
-            </Body>
-            <Right>
-              <Icon active name="arrow-forward" />
-            </Right>
-          </ListItem>
-          <ListItem icon onPress={() => navigation.navigate("ProductStack")}>
-            <Left>
-              <Button style={{ backgroundColor: "#007AFF" }}>
-                <Icon active name="cart" />
-              </Button>
-            </Left>
-            <Body>
-              <Text>สินค้า</Text>
-            </Body>
-            <Right>
-              <Icon active name="arrow-forward" />
-            </Right>
-          </ListItem>
+        {/* แสดงข้อมูล profile ที่เมนูด้านข้างต่อจากข้อความเมนูหลัก */}
+        {userStore.profile && (
+          <>
+            <Text style={{ color: "blue", fontSize: 15, fontWeight: "bold" }}>
+              ยินดีต้อนรับ คุณ {userStore.profile.name}
+            </Text>
+            <Text style={{ color: "blue", fontSize: 15, fontWeight: "bold" }}>
+              Email : {userStore.profile.email}
+            </Text>
+          </>
+        )}
+      </View>
+      {/* code from native base */}
+      <Content>
+        <ListItem
+          icon
+          style={{ marginBottom: 10, marginTop: 10 }}
+          onPress={() => navigation.navigate("HomeStack")}
+        >
+          <Left>
+            <Button style={{ backgroundColor: "#FF9501" }}>
+              <Icon active name="home" />
+            </Button>
+          </Left>
+          <Body>
+            <Text>หน้าหลัก</Text>
+          </Body>
+          <Right>
+            <Icon active name="arrow-forward" />
+          </Right>
+        </ListItem>
+        <ListItem icon onPress={() => navigation.navigate("ProductStack")}>
+          <Left>
+            <Button style={{ backgroundColor: "#007AFF" }}>
+              <Icon active name="cart" />
+            </Button>
+          </Left>
+          <Body>
+            <Text>สินค้า</Text>
+          </Body>
+          <Right>
+            <Icon active name="arrow-forward" />
+          </Right>
+        </ListItem>
+        {!userStore.profile && (
           <ListItem icon onPress={() => navigation.navigate("Login")}>
             <Left>
               <Button style={{ backgroundColor: "#007AFF" }}>
@@ -74,8 +109,31 @@ const MenuScreen = ({ navigation }) => {
               <Icon active name="arrow-forward" />
             </Right>
           </ListItem>
-        </Content>
-      </View>
+        )}
+        {userStore.profile && (
+          <ListItem
+            icon
+            onPress={async () => {
+              await AsyncStorage.removeItem("@token");
+              await AsyncStorage.removeItem("@profile");
+              userStore.updateProfile(null);
+              navigation.closeDrawer();
+            }}
+          >
+            <Left>
+              <Button style={{ backgroundColor: "#007AFF" }}>
+                <Icon active name="log-out" />
+              </Button>
+            </Left>
+            <Body>
+              <Text>ออกจากระบบ</Text>
+            </Body>
+            <Right>
+              <Icon active name="arrow-forward" />
+            </Right>
+          </ListItem>
+        )}
+      </Content>
     </ScrollView>
   );
 };

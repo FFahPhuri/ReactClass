@@ -7,7 +7,7 @@ import {
   HeaderButton,
   Item,
 } from "react-navigation-header-buttons";
-import RegisterScreen from "./RegisterScreen";
+import { userStoreContext } from "../context/UserContext";
 
 const IoniconsHeaderButton = (props) => (
   <HeaderButton IconComponent={Ionicons} iconSize={23} {...props} />
@@ -37,9 +37,17 @@ const HomeScreen = ({ navigation }) => {
     });
   }, [navigation]);
 
+  const userStore = React.useContext(userStoreContext);
+
   return (
     <View style={styles.container}>
       <Ionicons name="home-outline" size={30} color="#654321" />
+      {userStore.profile && (
+        <>
+          <Text>ยินดีต้อนรับ : {userStore.profile.name}</Text>
+          <Text>อีเมล : {userStore.profile.email}</Text>
+        </>
+      )}
       <Text>หน้าหลัก</Text>
       <Button
         title="Go to About"

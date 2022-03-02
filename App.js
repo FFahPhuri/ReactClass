@@ -12,6 +12,7 @@ import DetailScreen from "./screens/DetailScreen";
 import MenuScreen from "./screens/MenuScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
+import UserStoreProvider from "./context/UserContext";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -79,20 +80,22 @@ function ProductStack() {
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Drawer.Navigator
-        initialRouteName="HomeStack"
-        drawerPosition="left"
-        drawerContentOptions={{
-          activeTintColor: "#0000FF",
-          ItemStyle: { marginVertical: 5 },
-        }}
-        drawerContent={(props) => <MenuScreen {...props} />}
-      >
-        <Drawer.Screen name="HomeStack" component={HomeStack} />
-        <Drawer.Screen name="ProductStack" component={ProductStack} />
-      </Drawer.Navigator>
-    </NavigationContainer>
+    <UserStoreProvider>
+      <NavigationContainer>
+        <Drawer.Navigator
+          initialRouteName="HomeStack"
+          drawerPosition="left"
+          drawerContentOptions={{
+            activeTintColor: "#0000FF",
+            ItemStyle: { marginVertical: 5 },
+          }}
+          drawerContent={(props) => <MenuScreen {...props} />}
+        >
+          <Drawer.Screen name="HomeStack" component={HomeStack} />
+          <Drawer.Screen name="ProductStack" component={ProductStack} />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    </UserStoreProvider>
   );
 };
 

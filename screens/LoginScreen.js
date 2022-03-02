@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { Alert, View, Text } from "react-native";
 import React from "react";
 import {
   Container,
@@ -14,6 +14,8 @@ import {
 import axios from "axios";
 import { Formik, Field } from "formik";
 import * as Yup from "yup";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { userStoreContext } from "../context/UserContext";
 
 const ValidateSchema = Yup.object().shape({
   email: Yup.string()
@@ -25,6 +27,7 @@ const ValidateSchema = Yup.object().shape({
 });
 
 const LoginScreen = ({ navigation }) => {
+  const userStore = React.useContext(userStoreContext);
   return (
     <Container>
       <Content padder>
@@ -36,26 +39,44 @@ const LoginScreen = ({ navigation }) => {
           }}
           validationSchema={ValidateSchema}
           //เมื่อคลิก register (submit)
-          //   onSubmit={async (values, { setSubmitting }) => {
-          // alert(JSON.stringify(values));
-          // same shape as initial values
-          // console.log(values);
-          // try {
-          //   const url = "https://api.codingthailand.com/api/register";
-          //   const res = await axios.post(url, {
-          //     email: values.email,
-          //     password: values.password,
-          //   });
-          //   alert(res.data.message);
-          // } catch (error) {
-          //   //ถ้า save ข้อมูลลง server ไม่ได้
-          //   alert(error.response.data.errors.email[0]);
-          //   navigation.navigate("Home");
-          // } finally {
-          //   setSubmitting(false);
-          //   //ให้ปุ่มใช้งานได้
-          // }
-          //   }}
+          onSubmit={async (values, { setSubmitting }) => {
+            // alert(JSON.stringify(values));
+            try {
+              const url = "https://api.codingthailand.com/api/login";
+              const res = await axios.post(url, {
+                email: values.email,
+                password: values.password,
+              });
+              //   alert(JSON.stringify(res.data));
+              // เก็บ token ลงเครื่อง
+              await AsyncStorage.setItem("@token", JSON.stringify(res.data));
+              //get profile --> ทำงานที่ postman
+              const urlProfile = "https://api.codingthailand.com/api/profile";
+              const resProfile = await axios.get(urlProfile, {
+                headers: {
+                  Authorization: "Bearer " + res.data.access_token,
+                },
+              });
+              //   alert(JSON.stringify(resProfile.data.data.user));
+              // เก็บข้้อมูล profile ลง AsyncStorage
+              await AsyncStorage.setItem(
+                "@profile",
+                JSON.stringify(resProfile.data.data.user)
+              );
+
+              //get & update Profile by Context/Global state
+              const profile = await AsyncStorage.getItem("@profile");
+              userStore.updateProfile(JSON.parse(profile));
+
+              alert("เข้าสู่ระบบแล้ว");
+              navigation.navigate("Home");
+            } catch (error) {
+              alert(error.response.data.message);
+            } finally {
+              setSubmitting = false;
+              //ให้ปุ่มใช้งานได้
+            }
+          }}
         >
           {/* errors --> ใช้เช็ค error (State) เช่นผู้ใช้ไม่กรอกข้อมูล จะให้ขึ้นอะไร */}
           {/* touched เมื่อ user กด name แล้วไปทำอย่างอื่นนอกช่อง โดยที่ยังไม่ใส่ข้อมูล */}
@@ -110,8 +131,8 @@ const LoginScreen = ({ navigation }) => {
                 </Item>
               )}
               <Button
-                // onPress={handleSubmit} //เปิด-ปิดปุ่ม
-                // disabled={isSubmitting}
+                onPress={handleSubmit} //เปิด-ปิดปุ่ม
+                disabled={isSubmitting}
                 block
                 large
                 style={{ marginTop: 30, backgroundColor: "#654321" }}
